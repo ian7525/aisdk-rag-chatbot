@@ -28,7 +28,7 @@ export async function processPdfFile(formData: FormData) {
 
     const records = chunks.map((chunk, index) => ({
       content: chunk,
-      embeddings: embeddings[index],
+      embedding: embeddings[index],
     }));
 
     await db.insert(documents).values(records);
