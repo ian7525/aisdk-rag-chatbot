@@ -1,4 +1,6 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { se } from "date-fns/locale";
+import { NextResponse } from "next/server";
 
 const isPublicRoute = createRouteMatcher([
   "/",
@@ -6,7 +8,17 @@ const isPublicRoute = createRouteMatcher([
   "/sign-out(.*)",
 ]);
 
+const isAdminRoute = createRouteMatcher(["/upload"]);
+
 export default clerkMiddleware(async (auth, request) => {
+  const { sessionClaims } = await auth();
+  const isAdmin = sessionClaims?.metadata?.role === "admin";
+
+  if (isAdminRoute(request) && !isAdmin) {
+    const url = new URL("/", request.url);
+    return NextResponse.redirect(url);
+  }
+
   if (!isPublicRoute(request)) {
     await auth.protect();
   }

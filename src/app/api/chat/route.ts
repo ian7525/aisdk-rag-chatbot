@@ -20,7 +20,6 @@ const tools = {
     }),
     execute: async ({ query }) => {
       try {
-        console.log("query=", query);
         const results = await searchDocuments(query, 3, 0.5);
         if (results.length === 0) {
           return "No relevant information found in the knowledge base";
@@ -29,8 +28,6 @@ const tools = {
         const formattedResults = results
           .map((r, i) => `[${i + 1}] ${r.content}`)
           .join("\n\n");
-
-        console.log("formattedResults=", formattedResults);
 
         return formattedResults;
       } catch (error) {
