@@ -1,5 +1,5 @@
-import { embed, embedMany } from "ai";
 import { openai } from "@ai-sdk/openai";
+import { embed, embedMany } from "ai";
 
 export async function generateEmbedding(text: string) {
   const input = text.replace("\n", "");

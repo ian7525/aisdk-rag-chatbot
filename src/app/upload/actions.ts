@@ -1,10 +1,10 @@
 "use server";
 
 import { PDFParse } from "pdf-parse";
+import { chunkContent } from "@/lib/chunking";
 import { db } from "@/lib/db-config";
 import { documents } from "@/lib/db-schema";
 import { generateEmbeddings } from "@/lib/embeddings";
-import { chunkContent } from "@/lib/chunking";
 
 export async function processPdfFile(formData: FormData) {
   let parser: PDFParse | undefined;

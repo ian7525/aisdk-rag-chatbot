@@ -1,7 +1,7 @@
 "use client";
 
-import { Fragment, useState } from "react";
 import { useChat } from "@ai-sdk/react";
+import { Fragment, useState } from "react";
 import {
   Conversation,
   ConversationContent,
@@ -15,10 +15,10 @@ import {
 import {
   PromptInput,
   PromptInputBody,
+  PromptInputFooter,
   type PromptInputMessage,
   PromptInputSubmit,
   PromptInputTextarea,
-  PromptInputFooter,
   PromptInputTools,
 } from "@/components/ai-elements/prompt-input";
 import { Shimmer } from "@/components/ai-elements/shimmer";
