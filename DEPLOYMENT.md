@@ -96,6 +96,27 @@ SELECT extname FROM pg_extension;   -- 應包含 vector
 SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';  -- 應包含 documents
 ```
 
+### Migration 策略:手動執行
+
+目前採**手動**對 production 執行 migration,不放進 CI 或 Vercel build。
+原因:schema 很少變動;自動化會把 production 連線字串放進 GitHub 或 build 流程,擴大機密暴露面;
+PR 的 CI 若連到 production 很危險。若日後 schema 變動頻繁,再評估自動化。
+
+變更 schema 的安全順序:
+
+1. 修改 `src/lib/db-schema.ts`
+2. `npx drizzle-kit generate`:在 `migrations/` 產生新的 SQL 檔,**不會動資料庫**。
+   檢查 SQL(特別注意 `DROP`、改欄位型別)
+3. `npx drizzle-kit migrate`:把 SQL 套用到**開發資料庫**,然後 `npm run dev` 在本機測試
+4. 開 PR,內容包含 `db-schema.ts`、`migrations/` 的新 SQL 與 `meta/` 更新、相關程式碼與測試;
+   等 CI 綠燈
+5. **Merge 之前**,用上面的臨時環境變數流程對 production 執行 migrate,完成後 `unset`
+6. Merge 到 `main`,Vercel 自動部署新程式碼
+
+為什麼第 5 步在第 6 步之前:merge 會立刻部署新程式碼,若資料庫還沒有新欄位會報錯;
+而舊程式碼遇到「多了欄位」的資料庫通常沒問題。此順序只適用於新增欄位或資料表(向下相容);
+刪除或改名需拆成多次發布。
+
 ## Clerk(登入與權限)
 
 目前沿用 **Development instance**(`pk_test_` / `sk_test_`)。
