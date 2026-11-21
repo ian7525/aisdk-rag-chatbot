@@ -1,13 +1,12 @@
 "use client";
 
-import { useState } from "react";
-import { processPdfFile } from "./actions";
-
-import { Card, CardContent } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Loader2 } from "lucide-react";
+import { useState } from "react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { processPdfFile } from "./actions";
 
 export default function PDFUpload() {
   const [isLoading, setIsLoading] = useState(false);

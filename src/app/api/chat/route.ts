@@ -1,13 +1,13 @@
-import {
-  streamText,
-  UIMessage,
-  convertToModelMessages,
-  tool,
-  InferUITools,
-  UIDataTypes,
-  stepCountIs,
-} from "ai";
 import { openai } from "@ai-sdk/openai";
+import {
+  convertToModelMessages,
+  type InferUITools,
+  stepCountIs,
+  streamText,
+  tool,
+  type UIDataTypes,
+  type UIMessage,
+} from "ai";
 import { z } from "zod";
 
 import { searchDocuments } from "@/lib/search";
