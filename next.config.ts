@@ -14,7 +14,7 @@ const nextConfig: NextConfig = {
     },
   },
   // pdf-parse needs the native @napi-rs/canvas (provides DOMMatrix) at runtime
-  serverExternalPackages: ["pdf-parse", "@napi-rs/canvas"],
+  serverExternalPackages: ["pdf-parse"],
 };
 
 export default nextConfig;
