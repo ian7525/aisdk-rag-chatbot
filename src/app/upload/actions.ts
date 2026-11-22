@@ -1,6 +1,7 @@
 "use server";
 
 import { PDFParse } from "pdf-parse";
+import { CanvasFactory } from "pdf-parse/worker";
 import { chunkContent } from "@/lib/chunking";
 import { db } from "@/lib/db-config";
 import { documents } from "@/lib/db-schema";
@@ -13,7 +14,7 @@ export async function processPdfFile(formData: FormData) {
     const file = formData.get("pdf") as File;
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
-    parser = new PDFParse({ data: buffer });
+    parser = new PDFParse({ data: buffer, CanvasFactory });
     const data = await parser.getText();
 
     if (!data.text || data.text.trim().length === 0) {
