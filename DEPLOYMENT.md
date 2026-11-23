@@ -55,6 +55,14 @@
 | `Missing script: "Lint"` | npm script 名稱區分大小寫(Linux) | 一律小寫 |
 | workflow 沒有執行時間就失敗 | YAML 欄位拼錯(`run-on`) | 應為 `runs-on` |
 
+## Vercel 部署踩過的坑
+
+| 現象 | 原因 | 解法 |
+|---|---|---|
+| 上傳 PDF 回傳 `{"digest":"..."}`;Runtime Logs 出現 `Failed to load external module pdf-parse: ReferenceError: DOMMatrix is not defined`,以及 `Cannot load "@napi-rs/canvas" package` | `pdf-parse` 靠原生套件 `@napi-rs/canvas` 提供 `DOMMatrix` 等物件;本機 Windows 有對應二進位檔,Vercel 的 Linux 載不到,模組一載入就失敗 | 依 pdf-parse 官方文件,從 `pdf-parse/worker` 匯入 `CanvasFactory` 並傳給 `new PDFParse({ data, CanvasFactory })`(`src/app/upload/actions.ts`)。**只在 `serverExternalPackages` 加 `@napi-rs/canvas` 無效**,已還原 |
+
+除錯方法:Production 只回傳 digest(隱藏細節),真正的錯誤要看 Vercel → Logs → Runtime Logs。
+
 ## 環境變數
 
 | 變數 | Production | Preview | 值的來源 |
