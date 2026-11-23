@@ -282,6 +282,36 @@ Vercel 專案 → Deployments → 選之前的 Production 部署 → ⋯ → Ins
 
 除錯習慣:Production 只回傳 digest(隱藏細節),真正的錯誤要看 Vercel → Logs → Runtime Logs。
 
+## 檢查清單
+
+### 每次更新(開 PR 到 merge 前)
+
+- [ ] 從最新的 `main` 開新分支,不在 `main` 上直接改
+- [ ] 本機 `npm run lint`、`npm run typecheck`、`npm test` 都通過
+- [ ] 新增或修改的邏輯有補測試(外部服務一律 mock)
+- [ ] 沒有 commit 任何金鑰(看一下 `git diff`,新增檔案不是 `.env*`)
+- [ ] 若新增了環境變數:同步更新 `.env.example`,並在 Vercel 的 Production 與 Preview 都加上
+- [ ] 若有 schema 變更:依 [Migration 策略](#migration-策略手動執行) 先對 production 執行 migrate
+- [ ] PR 上 `CI / check` 為綠燈;Preview 部署成功,並實際點過改動的功能
+- [ ] Merge 使用一般的 PR 流程,不繞過 ruleset
+
+### 每次上線後(Production 部署 Ready 之後)
+
+- [ ] Vercel → Deployments:最新部署為 Ready,標示 Current
+- [ ] 開 `https://ragchatbot.lantaq.com`,登入正常(無 Development mode 標示)
+- [ ] `/chat` 問一個問題,有串流回答
+- [ ] 管理員:`/upload` 能進入並上傳小型 PDF,`/chat` 問得到內容
+- [ ] 異常時先看 Runtime Logs;無法快速修復就 Instant Rollback,再另開 PR 修
+
+### 定期維護
+
+- [ ] **OpenAI key 到期前一週輪替**(行事曆提醒);順序:建新 → 更新 Vercel → 驗證 → 刪舊
+- [ ] 每月看一次 OpenAI 餘額與用量;餘額不足時手動儲值(Auto-reload 保持關閉)
+- [ ] 處理 Dependabot alerts(套件漏洞)
+- [ ] 有新成員要使用:Clerk(Production)→ Users → Invite user
+- [ ] 套件大版本升級(Next.js、Vitest 等)先在分支上跑完整 CI 與 Preview 再 merge
+- [ ] 確認 GoDaddy 的網域沒有到期
+
 ## 已知待辦
 
 - [ ] Playwright E2E 煙霧測試(對 Preview URL 執行)
