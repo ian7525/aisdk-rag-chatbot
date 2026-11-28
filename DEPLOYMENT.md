@@ -58,10 +58,22 @@
 | `npm run typecheck` | `next typegen` + `tsc --noEmit` |
 | `npm test` | Vitest 單元測試 |
 | `npm run test:coverage` | 測試覆蓋率報告 |
+| `npm run e2e` | Playwright E2E 煙霧測試(見下方說明) |
 | `npm run build` | Production build |
 
 測試策略:外部服務(OpenAI、Neon、Clerk、pdf-parse)全部 mock,CI 不連任何真實服務。
 後端邏輯(`middleware.ts`、`api/chat`、`upload/actions`、`lib/*`)覆蓋率 100%;前端頁面尚無測試。
+
+### E2E 煙霧測試(Playwright)
+
+- 測試檔在 `e2e/`,設定在 `playwright.config.ts`;Vitest 只找 `src/**/*.test.ts`,兩者互不干擾。
+- 內容:未登入狀態下,首頁可開啟、`/chat` 導向登入、`/upload` 被擋回首頁。全部唯讀,不寫入任何資料。
+- 預設對 Production(`https://ragchatbot.lantaq.com`)執行:`npm run e2e`
+- 指定其他網址:`BASE_URL=http://localhost:3000 npm run e2e`(PowerShell:`$env:BASE_URL="http://localhost:3000"; npm run e2e`)
+- 失敗時的報告:`npx playwright show-report`(報告與 trace 在 `playwright-report/`、`test-results/`,已被 `.gitignore` 排除)
+- **刻意不放進 CI**:CI 在 merge 前執行,此時 Production 還是舊版本,測它沒有意義;外部網站不穩也會無故擋住 PR。定位是「部署後手動跑」。
+- 首次使用需下載瀏覽器:`npx playwright install chromium`
+- 不含登入後流程:Clerk 有 Email 驗證碼與機器人偵測,且 Production 為 Invite-only,自動化需使用 Clerk testing tokens,列入待辦。
 
 ## CI(GitHub Actions)
 
@@ -314,7 +326,7 @@ Vercel 專案 → Deployments → 選之前的 Production 部署 → ⋯ → Ins
 
 ## 已知待辦
 
-- [ ] Playwright E2E 煙霧測試(對 Preview URL 執行)
+- [ ] E2E 擴充:登入後流程(需 Clerk testing tokens)、對 Preview URL 執行(需處理 Vercel Authentication)
 - [ ] `middleware.ts` → `proxy.ts` 遷移(Next.js 已棄用 `middleware`,目前只有警告)
 - [ ] 中文等不含空白的文字,`chunkContent` 無法切分(產品決策待定)
 - [ ] 首頁仍是 create-next-app 預設範本
